@@ -51,19 +51,19 @@ class Demotivator:
         Добавляем текст в шаблон для демотиватора
 
         """
-        font_1 = ImageFont.truetype(font=font_name, size=top_size, encoding='UTF-8')
+        font_1 = ImageFont.truetype(font=f"/app/{fonttext}", size=top_size, encoding='UTF-8')
         text_width = font_1.getsize(self._top_text)[0]
 
         while text_width >= (width + 250) - 20:
-            font_1 = ImageFont.truetype(font=font_name, size=top_size, encoding='UTF-8')
+            font_1 = ImageFont.truetype(font=f"/app/{fonttext}", size=top_size, encoding='UTF-8')
             text_width = font_1.getsize(self._top_text)[0]
             top_size -= 1
 
-        font_2 = ImageFont.truetype(font=font_name, size=bottom_size, encoding='UTF-8')
+        font_2 = ImageFont.truetype(font=f"/app/{fonttext}", size=bottom_size, encoding='UTF-8')
         text_width = font_2.getsize(self._bottom_text)[0]
 
         while text_width >= (width + 250) - 20:
-            font_2 = ImageFont.truetype(font=font_name, size=bottom_size, encoding='UTF-8')
+            font_2 = ImageFont.truetype(font=f"/app/{fonttext}", size=bottom_size, encoding='UTF-8')
             text_width = font_2.getsize(self._bottom_text)[0]
             bottom_size -= 1
 
@@ -87,7 +87,7 @@ class Demotivator:
 
             idraw.watermark((1000 - len(watermark) * 5, 817, 1008 + len(watermark) * 5, 817), fill=0, width=4)
 
-            font_2 = ImageFont.truetype(font=font_name, size=20, encoding='UTF-8')
+            font_2 = ImageFont.truetype(font=f"/app/{fonttext}", size=20, encoding='UTF-8')
             size_2 = idraw.textsize(watermark.lower(), font=font_2)
             idraw.text((((width + 729) - size_2[0]) / 2, ((height - 192) - size_2[1])),
                        watermark.lower(), font=font_2)
