@@ -30,7 +30,7 @@ class Demotivator:
         if arrange:
             user_img = Image.open(file).convert("RGBA")
             (width, height) = user_img.size
-            img = Image.new('RGB', (width + 250, height + 260), color=fill_color)
+            img = Image.new('RGB', (width + (250*2), height + (260*2)), color=fill_color)
             img_border = Image.new('RGB', (width + 10, height + 10), color='#000000')
             border = ImageOps.expand(img_border, border=2, fill='#ffffff')
             img.paste(border, (111, 96))
