@@ -1,3 +1,7 @@
+import io
+import sys
+from io import BytesIO
+
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import requests
 import os
@@ -7,30 +11,34 @@ class Demotivator:
     def __init__(self, top_text='', bottom_text=''):
         self._top_text = top_text
         self._bottom_text = bottom_text
+        self.raw_data: bytes | None = None
 
     def create(self, file: str, watermark=None, result_filename='demresult.jpg',
                font_color='white', fill_color='black',
                font_name='times.ttf', top_size=80, bottom_size=60,
-               arrange=False, use_url=False, delete_file=False) \
+               arrange=False, use_url=False, delete_file=False, return_raw=False, down_arrange=False) \
             -> bool:  # Returns True if method executed successfully
 
         if use_url:
             p = requests.get(file)
-            out = open(r'demotivator_picture.jpg', "wb")
-            out.write(p.content)
-            out.close()
-
-            file = 'demotivator_picture.jpg'
+            file = io.BytesIO(p.content)
 
         """
         Создаем шаблон для демотиватора
         Вставляем фотографию в рамку
         """
 
-        if arrange:
+        if arrange or down_arrange:
             user_img = Image.open(file).convert("RGBA")
             (width, height) = user_img.size
-            img = Image.new('RGB', (width + 250, height + 260), color=fill_color)
+            if down_arrange:
+                coefficient = height / 710
+                width = int(width / coefficient)
+                height = 710
+                user_img = user_img.resize((width, height))
+                img = Image.new('RGB', (width + 250, height + 314), color=fill_color)
+            else:
+                img = Image.new('RGB', (width + 250, height + 260), color=fill_color)
             img_border = Image.new('RGB', (width + 10, height + 10), color='#000000')
             border = ImageOps.expand(img_border, border=2, fill='#ffffff')
             img.paste(border, (111, 96))
@@ -70,11 +78,13 @@ class Demotivator:
         size_1 = drawer.textsize(self._top_text, font=font_1)
         size_2 = drawer.textsize(self._bottom_text, font=font_2)
 
-        if arrange:
-            drawer.text((((width + 250) - size_1[0]) / 2, ((height + 190) - size_1[1])),
+        if arrange or down_arrange:
+            top_y = 840 if down_arrange else ((height + 190) - size_1[1])
+            bottom_y = 930 if down_arrange else ((height + 235) - size_2[1])
+            drawer.text((((width + 250) - size_1[0]) / 2, top_y),
                         self._top_text, fill=font_color,
                         font=font_1)
-            drawer.text((((width + 250) - size_2[0]) / 2, ((height + 235) - size_2[1])),
+            drawer.text((((width + 250) - size_2[0]) / 2, bottom_y),
                         self._bottom_text, fill=font_color,
                         font=font_2)
         else:
@@ -92,9 +102,17 @@ class Demotivator:
             idraw.text((((width + 729) - size_2[0]) / 2, ((height - 192) - size_2[1])),
                        watermark.lower(), font=font_2)
 
-        img.save(result_filename)
+        if return_raw:
+            data = io.BytesIO()
+            img.save(data, format="JPEG")
+            self.raw_data = data.getvalue()
+        else:
+            img.save(result_filename)
 
         if delete_file:
             os.remove(file)
 
         return True
+
+    def clear_data(self):
+        self.raw_data = None

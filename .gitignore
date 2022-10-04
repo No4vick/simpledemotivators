@@ -133,3 +133,6 @@ dmypy.json
 
 # Directory for lib tests
 testing/
+
+file_v_bytes_test.py
+/file_v_bytes_test.py
