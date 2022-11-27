@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="simpledemotivators",
-    version="2.1.1",
+    version="2.1.4",
     author="infqq",
     description="Tool for easy demotivators",
     url="https://github.com/Infqq/simpledemotivators",
@@ -16,7 +16,7 @@ setuptools.setup(
         "Operating System :: OS Independent"
     ],
     install_requires=[
-        'pillow==9.1.0',
-        'requests==2.25.1',
+        'pillow==9.3.0',
+        'requests==2.28.1',
     ],
 )
