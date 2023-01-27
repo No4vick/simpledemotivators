@@ -13,11 +13,16 @@ class Demotivator:
         self._bottom_text = bottom_text
         self.raw_data: bytes | None = None
 
-    def create(self, file: str, watermark=None, result_filename='demresult.jpg',
+    def create(self, file: str | bytes, watermark=None, result_filename='demresult.jpg',
                font_color='white', fill_color='black',
                font_name='times.ttf', top_size=80, bottom_size=60,
-               arrange=False, use_url=False, delete_file=False, return_raw=False, down_arrange=False) \
+               arrange=False, use_url=False, use_bytes=False, delete_file=False, return_raw=False, down_arrange=False) \
             -> bool:  # Returns True if method executed successfully
+
+        if use_bytes:
+            file = io.BytesIO(file)
+        elif type(file) is not str:
+            raise TypeError("Нельзя использовать байты по умолчанию.")
 
         if use_url:
             p = requests.get(file)
