@@ -13,6 +13,11 @@ class Demotivator:
         self._bottom_text = bottom_text
         self.raw_data: bytes | None = None
 
+    def get_text_width(self, font):
+        left, _, right, _ = font.getbbox(self._top_text)
+        width = right - left
+        return width
+
     def create(self, file: str | bytes, watermark=None, result_filename='demresult.jpg',
                font_color='white', fill_color='black',
                font_name='times.ttf', top_size=80, bottom_size=60,
@@ -65,23 +70,26 @@ class Demotivator:
 
         """
         font_1 = ImageFont.truetype(font=f"/app/{font_name}", size=top_size, encoding='UTF-8')
-        text_width = font_1.getsize(self._top_text)[0]
+        # text_width = font_1.getsize(self._top_text)[0]
+        text_width = self.get_text_width(font_1)
 
         while text_width >= (width + 250) - 20:
             font_1 = ImageFont.truetype(font=f"/app/{font_name}", size=top_size, encoding='UTF-8')
-            text_width = font_1.getsize(self._top_text)[0]
+            text_width = self.get_text_width(font_1)
             top_size -= 1
 
         font_2 = ImageFont.truetype(font=f"/app/{font_name}", size=bottom_size, encoding='UTF-8')
-        text_width = font_2.getsize(self._bottom_text)[0]
+        text_width = self.get_text_width(font_2)
 
         while text_width >= (width + 250) - 20:
             font_2 = ImageFont.truetype(font=f"/app/{font_name}", size=bottom_size, encoding='UTF-8')
-            text_width = font_2.getsize(self._bottom_text)[0]
+            text_width = self.get_text_width(font_2)
             bottom_size -= 1
 
-        size_1 = drawer.textsize(self._top_text, font=font_1)
-        size_2 = drawer.textsize(self._bottom_text, font=font_2)
+        left, top, right, bottom = drawer.textbbox([0, 0] ,self._top_text, font=font_1)
+        size_1 = right - left, bottom - top
+        left, top, right, bottom = drawer.textbbox([0, 0], self._bottom_text, font=font_2)
+        size_2 = right - left, bottom - top
 
         if arrange or down_arrange:
             top_y = 840 if down_arrange else ((height + 190) - size_1[1])
@@ -103,7 +111,8 @@ class Demotivator:
             idraw.line((1000 - len(watermark) * 5, 817, 1008 + len(watermark) * 5, 817), fill=0, width=4)
 
             font_2 = ImageFont.truetype(font=f"/app/{font_name}", size=20, encoding='UTF-8')
-            size_2 = idraw.textsize(watermark.lower(), font=font_2)
+            left, top, right, bottom = idraw.textbbox([0, 0], watermark.lower(), font=font_2)
+            size_2 = right - left, bottom - top
             idraw.text((((width + 729) - size_2[0]) / 2, ((height - 192) - size_2[1])),
                        watermark.lower(), font=font_2)
 
