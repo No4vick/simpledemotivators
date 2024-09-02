@@ -18,6 +18,6 @@ setuptools.setup(
     ],
     install_requires=[
         'pillow==10.4.0',
-        'requests==2.28.1',
+        'requests==2.32.3',
     ],
 )
